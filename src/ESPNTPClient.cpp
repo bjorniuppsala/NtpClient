@@ -25,14 +25,31 @@ The views and conclusions contained in the software and documentation are those 
 authors and should not be interpreted as representing official policies, either expressed
 or implied, of German Martin
 */
-// 
-// 
-// 
+//
+//
+//
 
-#ifdef ARDUINO_ARCH_ESP8266
+#if defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
+
 
 #include "NtpClientLib.h"
+#ifdef ARDUINO_ARCH_ESP8266
 #include <ESP8266WiFi.h>
+#elif defined(ARDUINO_ARCH_ESP32)
+#include <WiFi.h>
+#include <apps/sntp/sntp.h>
+using uint32 = uint32_t;
+using uint8 = uint8_t;
+
+uint32 sntp_get_current_timestamp()
+{
+	uint32 secs, usecs;
+	SNTP_GET_SYSTEM_TIME(secs, usecs);
+	return secs + uint32(usecs / 1000000);
+}
+#else
+#error "Incorrect platform. Only ESP8266 and ESP32 MCUs are valid."
+#endif
 
 #define DBG_PORT Serial
 
@@ -92,7 +109,11 @@ bool NTPClient::setTimeZone(int timeZone)
 
 int NTPClient::getTimeZone()
 {
+	#if defined(ARDUINO_ARCH_ESP32)
+	return 0;
+	#else
 	return sntp_get_timezone();
+	#endif
 }
 
 /*void NTPClient::setLastNTPSync(time_t moment) {

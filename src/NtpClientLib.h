@@ -40,7 +40,7 @@ or implied, of German Martin
 
 //#define DEBUG_NTPCLIENT //Uncomment this to enable debug messages over serial port
 
-#ifdef ESP8266
+#if defined(ESP8266)
 extern "C" {
 #include "user_interface.h"
 #include "sntp.h"
@@ -61,17 +61,17 @@ using namespace placeholders;
 #define NETWORK_W5100           (1) // Arduino Ethernet Shield
 #define NETWORK_ENC28J60        (2) // Alternate Ethernet Shield
 #define NETWORK_WIFI101			(3) // WiFi Shield 101 or MKR1000
-#define NETWORK_ESP8266			(100) // ESP8266 boards, not for Arduino using AT firmware
+#define NETWORK_ESP8266_or_ESP32 (100) // ESP8266 boards, not for Arduino using AT firmware
 
 #define DEFAULT_NTP_SERVER "pool.ntp.org" // Default international NTP server. I recommend you to select a closer server to get better accuracy
 #define DEFAULT_NTP_PORT 123 // Default local udp port. Select a different one if neccesary (usually not needed)
-#define DEFAULT_NTP_INTERVAL 1800 // Default sync interval 30 minutes 
+#define DEFAULT_NTP_INTERVAL 1800 // Default sync interval 30 minutes
 #define DEFAULT_NTP_SHORTINTERVAL 5 // Sync interval when sync has not been achieved. 15 seconds
 #define DEFAULT_NTP_TIMEZONE 0 // Select your local time offset. 0 if UTC time has to be used
 
 
-#ifdef ARDUINO_ARCH_ESP8266
-#define NETWORK_TYPE NETWORK_ESP8266
+#if defined (ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
+#define NETWORK_TYPE NETWORK_ESP8266_or_ESP32
 
 #elif defined ARDUINO_ARCH_AVR || defined ARDUINO_ARCH_SAMD || defined ARDUINO_ARCH_ARC32
 #define NETWORK_TYPE NETWORK_WIFI101 // SET YOUR NETWORK INTERFACE
@@ -127,7 +127,7 @@ public:
 	*/
 	bool begin(String ntpServerName = DEFAULT_NTP_SERVER, int timeOffset = DEFAULT_NTP_TIMEZONE, bool daylight = false);
 
-#ifdef ARDUINO_ARCH_ESP8266
+#if NETWORK_TYPE == NETWORK_ESP8266_or_ESP32
 	/**
 	* Sets NTP server name.
 	* @param[in] New NTP server name.

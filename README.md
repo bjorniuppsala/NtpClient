@@ -1,5 +1,6 @@
 #NtpClientLib
 
+This is my take on making it work on esp32, under platformio using arduino platform.
 ##Introduction
 There are some NTP client examples around. You can see some examples, like [this].
 
